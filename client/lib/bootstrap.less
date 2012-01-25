@@ -1,0 +1,81 @@
+/*!
+ * Bootstrap @VERSION
+ *
+ * Copyright 2011 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ * Date: @DATE
+ */
+
+// CSS Reset
+@import "reset.less";
+
+// Core variables and mixins
+@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";
+
+// Grid system and page structure
+@import "scaffolding.less";
+
+// Styled patterns and elements
+@import "type.less";
+@import "forms.less";
+@import "tables.less";
+@import "patterns.less";
+
+// Our stuff
+body {
+	padding-top: 60px;
+	background-color: #f2f2f2;
+}
+
+#project-list {
+	
+	background-color: #fff;
+	border-radius: 3px;
+	.box-shadow();
+	padding: 3px 0;
+
+	li {
+		list-style: none;
+		padding: 5px 0 5px 8px;
+	}
+}
+
+#project-display {
+	
+	background-color: #fff;
+	border-radius: 3px;
+	.box-shadow();
+
+	h1 {
+		//background: #eee;
+		border-bottom: 1px solid #ddd;
+		padding: 7px 0 5px 10px;
+		margin-bottom: 0;
+	}
+
+	.group {
+		
+		overflow: auto;
+
+		.field {
+			float: left;
+			width: 150px;
+			font-weight: bold;
+			font-size: 15px;
+			text-align: right;
+			padding: 10px 8px 10px 0;
+			border-right: 1px solid #ddd;
+			background-color: #eee;
+		}
+
+		.value {
+			float: left;
+			font-size: 15px;
+			padding: 10px 0 10px 8px;
+		}
+	}
+}
