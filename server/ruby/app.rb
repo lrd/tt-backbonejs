@@ -2,6 +2,19 @@ require 'rubygems'
 require 'sinatra'
 require 'json'
 require 'memcache'
+require 'active_record'
+
+ActiveRecord::Base.establish_connection(
+  :adapter => 'sqlite3',
+  :database => 'app.db'
+)
+
+ActiveRecord::Base.include_root_in_json = false
+
+class Project < ActiveRecord::Base
+end
+
+puts Project.all.to_json
 
 # memcached -p 11211 &
 # curl -v -d @d localhost:4567
@@ -19,12 +32,16 @@ require 'memcache'
 # curl -v localhost:4567/
 cache = MemCache.new(["localhost:11211"])
 
-get "/" do
-  content_type :json
-  cache.get('projects').to_json
+get '/' do
+  File.read File.join('public', 'basic/index.html')
 end
 
-get "/:id" do
+get "/projects" do
+  content_type :json
+  Project.all.to_json
+end
+
+get "/projects/:id" do
   content_type :json
   proj = cache.get( 'projects' ).find{ |i| i["id"] == params[:id].to_i }
   if proj.nil?
@@ -34,7 +51,7 @@ get "/:id" do
   end
 end
 
-delete "/:id" do
+delete "/projects/:id" do
   content_type :json
   proj = cache.get('projects')
   proj.delete_if{ |i| i["id"] == params[:id].to_i }
@@ -42,30 +59,26 @@ delete "/:id" do
   200
 end
 
-put "/:id/?" do
+put "/projects/:id/?" do
   content_type :json
   request.body.rewind
-  attrs = JSON.parse(request.body.read)
-  proj = cache.get('projects')
-  if proj.nil?
-    proj = [attrs]
+  data = JSON.parse(request.body.read)
+  p = Project.find(params[:id])
+  if p.update_attributes(data)
+    p.to_json
   else
-    proj = proj + [attrs]
+    400
   end
-  cache.set( 'projects', proj )
-  200
 end
 
-post "/?" do
+post "/projects/?" do
   content_type :json
   request.body.rewind
-  attrs = JSON.parse(request.body.read)
-  proj = cache.get('projects')
-  if proj.nil?
-    proj = [attrs]
+  data = JSON.parse(request.body.read)
+  p = Project.new(data)
+  if p.save
+    p.to_json
   else
-    proj = proj + [attrs]
+    400
   end
-  cache.set( 'projects', proj )
-  201
 end

@@ -19,7 +19,6 @@ class app.collections.Projects extends Backbone.Collection
 
 	model: app.models.Project
 	url: '/projects'
-	localStorage: new Store('projects')
 
 
 
@@ -36,8 +35,8 @@ class app.views.ProjectList extends Backbone.View
 		view = new app.views.ProjectListItem model: project
 		$(@el).append view.render().el
 
-	addAll: ->
-		console.log 'reset'
+	addAll: (collection) =>
+		collection.each @addOne
 
 	render: ->
 		return @
@@ -64,6 +63,7 @@ class app.views.ProjectDisplay extends Backbone.View
 		return @
 
 
+
 class app.routers.Main extends Backbone.Router
 
 	routes:
@@ -74,12 +74,7 @@ class app.routers.Main extends Backbone.Router
 		# do whatever
 
 	view_project: (id) ->
-		# get project by id and show it
-		#project = new app.models.Project id: id
-		#project.fetch
-		#	success: ->
-		#		$('.content').html projectDisplay.render().el
-
+		# show a project
 		projectDisplay = new app.views.ProjectDisplay model: app.projects.get(id)
 		$('.content').html projectDisplay.render().el
 
@@ -93,4 +88,8 @@ $(document).ready ->
 
 	app.router = new app.routers.Main()
 
-	Backbone.history.start()
+	app.projects.fetch
+		success: ->
+			Backbone.history.start()
+		error: ->
+			alert 'Could not load projects... sorry!'

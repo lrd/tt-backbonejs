@@ -1,5 +1,7 @@
 (function() {
-  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   window.app = {};
 
@@ -11,9 +13,9 @@
 
   app.routers = {};
 
-  app.models.Project = (function() {
+  app.models.Project = (function(_super) {
 
-    __extends(Project, Backbone.Model);
+    __extends(Project, _super);
 
     function Project() {
       Project.__super__.constructor.apply(this, arguments);
@@ -28,11 +30,11 @@
 
     return Project;
 
-  })();
+  })(Backbone.Model);
 
-  app.collections.Projects = (function() {
+  app.collections.Projects = (function(_super) {
 
-    __extends(Projects, Backbone.Collection);
+    __extends(Projects, _super);
 
     function Projects() {
       Projects.__super__.constructor.apply(this, arguments);
@@ -42,17 +44,16 @@
 
     Projects.prototype.url = '/projects';
 
-    Projects.prototype.localStorage = new Store('projects');
-
     return Projects;
 
-  })();
+  })(Backbone.Collection);
 
-  app.views.ProjectList = (function() {
+  app.views.ProjectList = (function(_super) {
 
-    __extends(ProjectList, Backbone.View);
+    __extends(ProjectList, _super);
 
     function ProjectList() {
+      this.addAll = __bind(this.addAll, this);
       this.addOne = __bind(this.addOne, this);
       ProjectList.__super__.constructor.apply(this, arguments);
     }
@@ -73,8 +74,8 @@
       return $(this.el).append(view.render().el);
     };
 
-    ProjectList.prototype.addAll = function() {
-      return console.log('reset');
+    ProjectList.prototype.addAll = function(collection) {
+      return collection.each(this.addOne);
     };
 
     ProjectList.prototype.render = function() {
@@ -83,11 +84,11 @@
 
     return ProjectList;
 
-  })();
+  })(Backbone.View);
 
-  app.views.ProjectListItem = (function() {
+  app.views.ProjectListItem = (function(_super) {
 
-    __extends(ProjectListItem, Backbone.View);
+    __extends(ProjectListItem, _super);
 
     function ProjectListItem() {
       ProjectListItem.__super__.constructor.apply(this, arguments);
@@ -102,11 +103,11 @@
 
     return ProjectListItem;
 
-  })();
+  })(Backbone.View);
 
-  app.views.ProjectDisplay = (function() {
+  app.views.ProjectDisplay = (function(_super) {
 
-    __extends(ProjectDisplay, Backbone.View);
+    __extends(ProjectDisplay, _super);
 
     function ProjectDisplay() {
       ProjectDisplay.__super__.constructor.apply(this, arguments);
@@ -123,11 +124,11 @@
 
     return ProjectDisplay;
 
-  })();
+  })(Backbone.View);
 
-  app.routers.Main = (function() {
+  app.routers.Main = (function(_super) {
 
-    __extends(Main, Backbone.Router);
+    __extends(Main, _super);
 
     function Main() {
       Main.__super__.constructor.apply(this, arguments);
@@ -150,13 +151,20 @@
 
     return Main;
 
-  })();
+  })(Backbone.Router);
 
   $(document).ready(function() {
     app.projects = new app.collections.Projects();
     app.projectListView = new app.views.ProjectList();
     app.router = new app.routers.Main();
-    return Backbone.history.start();
+    return app.projects.fetch({
+      success: function() {
+        return Backbone.history.start();
+      },
+      error: function() {
+        return alert('Could not load projects... sorry!');
+      }
+    });
   });
 
 }).call(this);

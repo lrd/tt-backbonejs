@@ -24,6 +24,7 @@
 		<div class='sidebar'>
 			<ul id='project-list'>
 			</ul>
+			<a id='create-project' href='#create' class='btn primary'>New project</a>
 		</div>
 		<div class='content'>
 			
@@ -31,7 +32,7 @@
 	</div>
 
 	<script id='project_display' type='text/html'>
-		<h1>{{name}}</h1>
+		<h1>{{name}} <a class='btn' href='#edit/{{id}}'>Edit</a></h1>
 		<div class='details'>
 			<div class='group'>
 				<div class='field'>Effort</div>
@@ -46,6 +47,30 @@
 				<div class='value'>{{reason}}</div>
 			</div>
 		</div>
+	</script>
+
+	<script id='project_form' type='text/html'>
+		<form>
+			<h1><input id='name' type='text' class='span7' value="{{name}}" /></h1>
+			<div class='details'>
+				<div class='group'>
+					<div class='field'>Effort</div>
+					<div class='value'><input id='effort' type='number' class='span3' value='{{effort}}' min='0' max='10' /></div>
+				</div>
+				<div class='group'>
+					<div class='field'>People involved</div>
+					<div class='value'><input id='people' type='number' class='span3' value='{{people}}' min='0' /></div>
+				</div>
+				<div class='group'>
+					<div class='field'>Reason</div>
+					<div class='value'><input id='reason' type='text' class='span7' value='{{reason}}' /></div>
+				</div>
+				<div class='group'>
+					<div class='field'>&nbsp;</div>
+					<div class='value'><input type='submit' class='btn' value='{{submit_text}}' /></div>
+				</div>
+			</div>
+		</form>
 	</script>
 </body>
 </html>
