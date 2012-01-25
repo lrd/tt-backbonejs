@@ -13,7 +13,10 @@ require 'memcache'
 # "people": 5000,
 # "reason": "Bored on a Sunday afternoon"
 # }
-#
+# 
+# curl -v -X DELETE localhost:4567/6
+# curl -v localhost:4567/6
+# curl -v localhost:4567/
 cache = MemCache.new(["localhost:11211"])
 
 get "/" do
@@ -31,7 +34,26 @@ get "/:id" do
   end
 end
 
+delete "/:id" do
+  content_type :json
+  proj = cache.get('projects')
+  proj.delete_if{ |i| i["id"] == params[:id].to_i }
+  cache.set( 'projects', proj )
+  200
+end
+
 put "/:id/?" do
+  content_type :json
+  request.body.rewind
+  attrs = JSON.parse(request.body.read)
+  proj = cache.get('projects')
+  if proj.nil?
+    proj = [attrs]
+  else
+    proj = proj + [attrs]
+  end
+  cache.set( 'projects', proj )
+  200
 end
 
 post "/?" do
@@ -45,5 +67,5 @@ post "/?" do
     proj = proj + [attrs]
   end
   cache.set( 'projects', proj )
-  status 201
+  201
 end
